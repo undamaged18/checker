@@ -9,7 +9,7 @@ import (
 
 var FormatErr = errors.New("invalid email format")
 var HostErr = errors.New("domain search returned 0 results")
-var emailRegexp = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+.[a-z{2,}]*$")
+var emailRegexp = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
 type emailChecker struct {
 	Format func(email string) error
@@ -18,20 +18,20 @@ type emailChecker struct {
 
 func Email() *emailChecker {
 	return &emailChecker{
-		Format: format,
-		Host:   host,
+		Format: emailFormat,
+		Host:   emailHost,
 	}
 }
 
-func format(email string) error {
+func emailFormat(email string) error {
 	if !emailRegexp.MatchString(strings.ToLower(email)) {
 		return FormatErr
 	}
 	return nil
 }
 
-func host(email string) error {
-	if err := format(email); err != nil {
+func emailHost(email string) error {
+	if err := emailFormat(email); err != nil {
 		return FormatErr
 	}
 	s := strings.SplitAfter(email, "@")
