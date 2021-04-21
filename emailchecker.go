@@ -2,7 +2,6 @@ package checker
 
 import (
 	"errors"
-	"fmt"
 	"net"
 	"regexp"
 	"strings"
@@ -28,7 +27,6 @@ func Host(email string) error {
 
 	ips, err := net.LookupMX(host)
 	if err != nil {
-		fmt.Println(err)
 		return hostError
 	}
 
