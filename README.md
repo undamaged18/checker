@@ -6,7 +6,7 @@ _please note that this package is currently in early beta testing and is subject
 ### Email format validator
 ```
 func main() {
-    if err := checker.EmailFormat("valid@example.com"); err != nil {
+    if err := checker.Email.Format("valid@example.com"); err != nil {
         fmt.Println(err) // err = "invalid email format"
     }
 }
@@ -15,7 +15,7 @@ func main() {
 ### Email Host validator
 ```
 func main() {
-    if err := checker.EmailHost("invalid@hostdoesnotexist.com"); err != nil {
+    if err := checker.Email.Host("invalid@hostdoesnotexist.com"); err != nil {
         fmt.Println(err) // err = "domain search returned 0 results"
     }
 }
