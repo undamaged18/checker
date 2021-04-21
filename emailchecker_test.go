@@ -1,9 +1,11 @@
 package checker
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestCorrectFormat(t *testing.T) {
-	var email = "valid.1_2-3@e_x-a.mple.com"
+	var email = "valid@example.com"
 	err := Format(email)
 	if err != nil {
 		t.Errorf("Email Format failed: %v", err.Error())
@@ -14,7 +16,7 @@ func TestIncorrectFormatNoDomain(t *testing.T) {
 	var email = "invalid@"
 	err := Format(email)
 	if err != nil {
-		if err.Error() != "invalid email format" {
+		if err != formatError {
 			t.Errorf("Email Format failed: %v", err.Error())
 		}
 	}
@@ -27,17 +29,17 @@ func TestIncorrectFormatNoTLD(t *testing.T) {
 	var email = "invalid@example"
 	err := Format(email)
 	if err != nil {
-		if err.Error() != "invalid email format" {
+		if err != formatError {
 			t.Errorf("Email Format failed: %v", err.Error())
 		}
 	}
 	if err == nil {
-		t.Errorf("Email Format failed: should of returned error as")
+		t.Errorf("Email Format failed: should of returned error as: %s", formatError)
 	}
 }
 
 func TestValidHost(t *testing.T) {
-	var email = "valid@blueyonder.com"
+	var email = "valid@gmail.com"
 	err := Host(email)
 
 	if err != nil {
@@ -46,11 +48,11 @@ func TestValidHost(t *testing.T) {
 }
 
 func TestInvalidHost(t *testing.T) {
-	var email = "invalid@invalid_hostname_should_not_return_value.com"
+	var email = "invalid@invalid_hostname.com"
 	err := Host(email)
 
 	if err != nil {
-		if err.Error() != "domain search returned 0 results" {
+		if err != formatError && err != hostError {
 			t.Errorf("Email host validation failed: %v", err.Error())
 		}
 	}
