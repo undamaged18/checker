@@ -79,3 +79,14 @@ func main() {
     }
 }
 ```
+
+## Postcodes
+### Format validator
+```
+func main() {
+    err := checker.Postcode().Format("AA1 1BB")
+    if err != nil {
+        fmt.Println(err) // returns invalid UK postcode format
+    }
+}
+```
