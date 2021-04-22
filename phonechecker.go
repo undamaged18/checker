@@ -2,20 +2,24 @@ package checker
 
 import (
 	"errors"
-	"regexp"
+	"github.com/ttacon/libphonenumber"
 	"strings"
 )
 
 type phone struct {
-	Format    func(number string) error
+	Format    func(number string, region string, f format) (string, error)
 	Mobile    func(number string) bool
 	LandLine  func(number string) bool
 	Premium   func(number string) bool
 	FreePhone func(number string) bool
 }
 
-var phoneRegexp = regexp.MustCompile(`^((((\(?0\d{4}\)?\s?\d{3}\s?\d{3})|(\(?0\d{3}\)?\s?\d{3}\s?\d{4})|(\(?0\d{2}\)?\s?\d{4}\s?\d{4}))(\s?\(\d{4}|\d{3}))?)|((\+44\s?7\d{3}|\(?07\d{3}\)?)\s?\d{3}\s?\d{3})|((((\+44\s?\d{4}|\(?0\d{4}\)?)\s?\d{3}\s?\d{3})|((\+44\s?\d{3}|\(?0\d{3}\)?)\s?\d{3}\s?\d{4})|((\+44\s?\d{2}|\(?0\d{2}\)?)\s?\d{4}\s?\d{4}))(\s?\(\d{4}|\d{3}))?$`)
 var phoneFormatErr = errors.New("invalid phone number format")
+
+type format libphonenumber.PhoneNumberFormat
+
+const NATIONAL = 2
+const INTERNATIONAL = 1
 
 func Phone() *phone {
 	return &phone{
@@ -27,25 +31,29 @@ func Phone() *phone {
 	}
 }
 
-func phoneFormat(number string) error {
-	if !phoneRegexp.MatchString(number) {
-		return phoneFormatErr
+func phoneFormat(number string, region string, f format) (string, error) {
+	num, err := libphonenumber.Parse(number, region)
+	if err != nil {
+		return "", phoneFormatErr
 	}
-	return nil
+	var phoneNumber string
+	switch f {
+	case NATIONAL:
+		phoneNumber = libphonenumber.Format(num, libphonenumber.NATIONAL)
+	case INTERNATIONAL:
+		phoneNumber = libphonenumber.Format(num, libphonenumber.INTERNATIONAL)
+	default:
+		phoneNumber = libphonenumber.Format(num, libphonenumber.NATIONAL)
+	}
+	return phoneNumber, nil
 }
 
 func isMobile(number string) bool {
-	if strings.HasPrefix(number, "07") || strings.HasPrefix(number, "+447") || strings.HasPrefix(number, "+44 7") {
-		return true
-	}
-	return false
+	return strings.HasPrefix(number, "07") || strings.HasPrefix(number, "+447") || strings.HasPrefix(number, "+44 7")
 }
 
 func isLandline(number string) bool {
-	if !strings.HasPrefix(number, "07") || !strings.HasPrefix(number, "+447") || !strings.HasPrefix(number, "+44 7") {
-		return true
-	}
-	return false
+	return !strings.HasPrefix(number, "07") || !strings.HasPrefix(number, "+447") || !strings.HasPrefix(number, "+44 7")
 }
 
 func isPremiumRate(number string) bool {
