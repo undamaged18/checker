@@ -1,7 +1,8 @@
 # Checker
-A Go package for validating formats
+**Version 0.1.0**\
+**Release Date: 22/04/2021**
 
-_please note that this package is currently in early beta testing and is subject to potential breaking changes_
+A Go package for validating formats of email addresses, phone numbers and UK postcodes
 
 ## Email Addresses
 ### Format validator
