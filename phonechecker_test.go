@@ -66,3 +66,16 @@ func TestPhoneNonFreePhone(t *testing.T) {
 		t.Errorf("Phone Freephone non check failed")
 	}
 }
+
+func TestPhoneMultistage(t *testing.T) {
+	num, err := Phone().Format("+44 7777 555 555", "GB", INTERNATIONAL)
+	if err != nil {
+		t.Errorf("Phone Format failed: %v", err.Error())
+	}
+	if num == "" {
+		t.Errorf("Phone Format failed: %v", "Expected returned number to be in format +44 xxxx xxxxxx")
+	}
+	if !Phone().Mobile(num) {
+		t.Errorf("Phone Mobile check failed")
+	}
+}
