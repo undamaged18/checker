@@ -27,17 +27,31 @@ func main() {
 ## Phone Numbers
 Phone number validation is based around UK phone numbers and allows for common formats such as `0800`, `+44800`, `+44 800` and `(0123) 456 7890`
 ### Format validator
+Format validator uses [ttacon / libphonenumber](https://github.com/ttacon/libphonenumber) Golang port of the [google / libphonenumber](https://github.com/google/libphonenumber)
 
+**National format**
 ```
 func main() {
-    if err := checker.Phone.Format("0300 000 0000"); err != nil {
+    num, err := checker.Phone().Format("+44 7777 555 555", "GB", checker.NATIONAl)
+    if err != nil {
         fmt.Println(err) // err = "invalid phone number format"
     }
+    fmt.Println(num) // returns phone number in the format XXXXX XXXXXX
+}
+```
+**International format**
+```
+func main() {
+    num, err := checker.Phone().Format("+44 7777 555 555", "GB", checker.INTERNATIONAL)
+    if err != nil {
+        fmt.Println(err) // err = "invalid phone number format"
+    }
+    fmt.Println(num) // returns phone number in the format +XX XXXX XXXXXX
 }
 ```
 
 ### Mobile Checker
-
+Check that the phone number supplied is a UK Mobile number
 ```
 func main() {
     if checker.Phone.Mobile("07000000000") {
@@ -47,7 +61,7 @@ func main() {
 ```
 
 ### Premium Rate Checker
-
+Check that the phone number supplied is a UK Premium rate number
 ```
 func main() {
     if checker.Phone.Premium("+44 845 0000 000") {
@@ -57,7 +71,7 @@ func main() {
 ```
 
 ### Freephone Rate Checker
-
+Check that the phone number supplied is a UK Freephone number
 ```
 func main() {
     if checker.Phone.FreePhone("+44 800 0000 000") {
